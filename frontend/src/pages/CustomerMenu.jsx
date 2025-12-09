@@ -213,13 +213,13 @@ export default function CustomerMenu() {
     }
   }, [menuItems]);
 
-  // Auto-open assistant when tableId is present (QR flow)
+  // Auto-open assistant when tableIdentifier is present (QR flow)
   useEffect(() => {
-    if (tableId && menuItems.length > 0) {
+    if (tableIdentifier && menuItems.length > 0) {
       const timer = setTimeout(() => setIsAssistantOpen(true), 600);
       return () => clearTimeout(timer);
     }
-  }, [tableId, menuItems]);
+  }, [tableIdentifier, menuItems]);
 
   // Handle option click
   function handleOptionClick(option) {
@@ -409,7 +409,7 @@ export default function CustomerMenu() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           restaurantId: RESTAURANT_ID,
-          tableId: tableId || null,
+          tableId: tableInfo?.id || tableIdentifier || null,
           requestType: requestType,
           notes: null
         }),
@@ -447,7 +447,7 @@ export default function CustomerMenu() {
       // Prepare order data
       const orderData = {
         restaurantId: RESTAURANT_ID,
-        tableId: tableId || null,
+        tableId: tableInfo?.id || tableIdentifier || null,
         items: cartItems.map(item => ({
           menuItemId: item.id,
           quantity: item.quantity,
@@ -457,6 +457,8 @@ export default function CustomerMenu() {
         status: 'pending',
         customerName: 'Customer' // Can be enhanced to ask for customer name
       };
+      
+      console.log('[MenuAI] Placing order:', { tableIdentifier, tableId: tableInfo?.id, orderData });
 
       const response = await fetch(`${API_URL}/orders`, {
         method: 'POST',
