@@ -14,7 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 type Staff = {
   id: string;
@@ -58,7 +59,7 @@ export default function StaffManagement() {
   const fetchStaff = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/staff?restaurantId=${RESTAURANT_ID}`);
+      const response = await fetch(`${API_URL}/staff?restaurantId=${RESTAURANT_ID}`);
       if (response.ok) {
         const data = await response.json();
         setStaff(data);
@@ -99,7 +100,7 @@ export default function StaffManagement() {
     setIsSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/staff`, {
+      const response = await fetch(`${API_URL}/staff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -140,7 +141,7 @@ export default function StaffManagement() {
     setIsSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/staff/${selected.id}`, {
+      const response = await fetch(`${API_URL}/staff/${selected.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -179,7 +180,7 @@ export default function StaffManagement() {
     if (!confirm('Are you sure you want to delete this staff member?')) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/staff/${id}`, {
+      const response = await fetch(`${API_URL}/staff/${id}`, {
         method: 'DELETE',
       });
 

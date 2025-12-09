@@ -25,7 +25,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 interface Table {
   id: string;
@@ -67,7 +68,7 @@ export default function TableManagement() {
       if (!RESTAURANT_ID) return;
       
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/tables?restaurantId=${RESTAURANT_ID}`);
+      const response = await fetch(`${API_URL}/tables?restaurantId=${RESTAURANT_ID}`);
       if (!response.ok) throw new Error('Failed to fetch tables');
       const data = await response.json();
 
@@ -126,7 +127,7 @@ export default function TableManagement() {
 
       // Create tables
       for (let i = 1; i <= tableCount; i++) {
-        const response = await fetch(`${API_BASE_URL}/tables`, {
+        const response = await fetch(`${API_URL}/tables`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -162,7 +163,7 @@ export default function TableManagement() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/tables/${tableId}`, {
+      const response = await fetch(`${API_URL}/tables/${tableId}`, {
         method: 'DELETE',
       });
 

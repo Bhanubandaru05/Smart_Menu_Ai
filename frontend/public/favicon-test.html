@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MenuAI Favicon Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #6366f1;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .preview-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .preview-card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+            transform: translateY(-5px);
+        }
+        .preview-card h3 {
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        .preview-card .size {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .icon-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .icon-display img {
+            max-width: 100%;
+            height: auto;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .instructions {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        .instructions h3 {
+            color: #1e40af;
+            margin-bottom: 1rem;
+        }
+        .instructions ul {
+            margin-left: 1.5rem;
+            color: #1e3a8a;
+            line-height: 1.8;
+        }
+        .instructions code {
+            background: #dbeafe;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .alert {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .alert-title {
+            color: #991b1b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .alert-text {
+            color: #7f1d1d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ MenuAI Favicon Setup</h1>
+        <p class="subtitle">Preview and verify your new favicon files</p>
+
+        <div class="grid">
+            <!-- SVG Logo -->
+            <div class="preview-card">
+                <h3>MenuAI Logo (SVG)</h3>
+                <p class="size">Vector - Any Size</p>
+                <div class="icon-display">
+                    <img src="/menuai-logo.svg" alt="MenuAI Logo" style="width: 128px; height: 128px;">
+                </div>
+                <span class="status success">✅ Created</span>
+            </div>
+
+            <!-- 192x192 PNG -->
+            <div class="preview-card">
+                <h3>Small Icon</h3>
+                <p class="size">192×192 PNG</p>
+                <div class="icon-display">
+                    <img src="/menuai-192.png" alt="192x192" style="width: 96px; height: 96px;" 
+                         onerror="this.parentElement.innerHTML='<p style=color:#ef4444;>❌ File not found</p>'">
+                </div>
+                <span class="status pending">⏳ Generate This</span>
+            </div>
+
+            <!-- 512x512 PNG -->
+            <div class="preview-card">
+                <h3>Large Icon</h3>
+                <p class="size">512×512 PNG</p>
+                <div class="icon-display">
+                    <img src="/menuai-512.png" alt="512x512" style="width: 128px; height: 128px;"
+                         onerror="this.parentElement.innerHTML='<p style=color:#ef4444;>❌ File not found</p>'">
+                </div>
+                <span class="status pending">⏳ Generate This</span>
+            </div>
+
+            <!-- Favicon.ico -->
+            <div class="preview-card">
+                <h3>Legacy Favicon</h3>
+                <p class="size">Multi-size ICO</p>
+                <div class="icon-display">
+                    <img src="/favicon.ico" alt="favicon" style="width: 64px; height: 64px;">
+                </div>
+                <span class="status pending">⏳ Update Needed</span>
+            </div>
+        </div>
+
+        <div class="alert">
+            <div class="alert-title">⚠️ Action Required</div>
+            <div class="alert-text">
+                You need to generate PNG files. The SVG logo is ready, but browsers and mobile devices need PNG versions.
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Quick Setup Instructions</h3>
+            <ul>
+                <li><strong>Option 1 - Node.js Script:</strong>
+                    <ul>
+                        <li>Run: <code>npm install --save-dev sharp</code></li>
+                        <li>Then: <code>node generate-favicons.js</code></li>
+                    </ul>
+                </li>
+                <li><strong>Option 2 - Online Converter (Easiest):</strong>
+                    <ul>
+                        <li>Go to <a href="https://cloudconvert.com/svg-to-png" target="_blank">cloudconvert.com/svg-to-png</a></li>
+                        <li>Upload <code>/public/menuai-logo.svg</code></li>
+                        <li>Convert to 192×192 → Save as <code>menuai-192.png</code></li>
+                        <li>Convert to 512×512 → Save as <code>menuai-512.png</code></li>
+                        <li>Place both files in <code>/public/</code> folder</li>
+                    </ul>
+                </li>
+                <li><strong>After generating:</strong>
+                    <ul>
+                        <li>Refresh this page to see the previews</li>
+                        <li>Clear browser cache: <code>Ctrl+Shift+Delete</code></li>
+                        <li>Check your main site favicon</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="instructions" style="background: #f0fdf4; border-color: #22c55e; margin-top: 1.5rem;">
+            <h3 style="color: #15803d;">✅ What's Already Done</h3>
+            <ul style="color: #166534;">
+                <li>✓ Created custom MenuAI logo with chef hat design</li>
+                <li>✓ Replaced old Lovable heart icon</li>
+                <li>✓ Updated <code>index.html</code> with all favicon references</li>
+                <li>✓ Created <code>manifest.json</code> for PWA support</li>
+                <li>✓ Added proper meta tags for social media</li>
+                <li>✓ Set theme color to MenuAI purple (#6366f1)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check if PNG files exist
+        function checkFile(url, element) {
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        console.log(`✅ ${url} exists`);
+                    } else {
+                        console.log(`❌ ${url} not found`);
+                    }
+                })
+                .catch(() => console.log(`❌ ${url} failed to load`));
+        }
+
+        checkFile('/menuai-192.png');
+        checkFile('/menuai-512.png');
+        checkFile('/menuai-logo.svg');
+    </script>
+</body>
+</html>

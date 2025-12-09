@@ -10,7 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Building2, User, Lock, Save } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 export default function Settings() {
   const { toast } = useToast();
@@ -48,7 +49,7 @@ export default function Settings() {
     const fetchSettings = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/settings?restaurantId=${RESTAURANT_ID}`);
+        const response = await fetch(`${API_URL}/settings?restaurantId=${RESTAURANT_ID}`);
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Failed to load restaurant settings');
@@ -81,7 +82,7 @@ export default function Settings() {
     if (user?.id) {
       const fetchProfile = async () => {
         try {
-          const response = await fetch(`${API_BASE_URL}/settings/profile/${user.id}`);
+          const response = await fetch(`${API_URL}/settings/profile/${user.id}`);
           if (response.ok) {
             const data = await response.json();
             setProfile({
@@ -104,7 +105,7 @@ export default function Settings() {
     setIsSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/settings`, {
+      const response = await fetch(`${API_URL}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -141,7 +142,7 @@ export default function Settings() {
     setIsSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/settings/profile/${user.id}`, {
+      const response = await fetch(`${API_URL}/settings/profile/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profile),
@@ -193,7 +194,7 @@ export default function Settings() {
     setIsSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/settings/change-password`, {
+      const response = await fetch(`${API_URL}/settings/change-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

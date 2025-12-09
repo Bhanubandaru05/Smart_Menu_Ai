@@ -24,11 +24,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 // API functions
 async function fetchMenuItems(restaurantId) {
-  const response = await fetch(`${API_BASE_URL}/menu?restaurantId=${restaurantId}`);
+  const response = await fetch(`${API_URL}/menu?restaurantId=${restaurantId}`);
   if (!response.ok) throw new Error('Failed to fetch menu items');
   const data = await response.json();
   // Transform to match frontend expectations
@@ -54,7 +55,7 @@ async function createMenuItem(item) {
     isAvailable: !item.isOutOfStock,
     imageUrl: item.image,
   };
-  const response = await fetch(`${API_BASE_URL}/menu`, {
+  const response = await fetch(`${API_URL}/menu`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -74,7 +75,7 @@ async function updateMenuItem({ id, ...data }) {
     isAvailable: data.isOutOfStock !== undefined ? !data.isOutOfStock : undefined,
     imageUrl: data.image,
   };
-  const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
+  const response = await fetch(`${API_URL}/menu/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -84,7 +85,7 @@ async function updateMenuItem({ id, ...data }) {
 }
 
 async function deleteMenuItem(id) {
-  const response = await fetch(`${API_BASE_URL}/menu/${id}`, {
+  const response = await fetch(`${API_URL}/menu/${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) throw new Error('Failed to delete menu item');
@@ -92,7 +93,7 @@ async function deleteMenuItem(id) {
 }
 
 async function forceDeleteMenuItem(id) {
-  const response = await fetch(`${API_BASE_URL}/menu/${id}?force=true`, {
+  const response = await fetch(`${API_URL}/menu/${id}?force=true`, {
     method: 'DELETE',
   });
   if (!response.ok) throw new Error('Failed to force delete menu item');

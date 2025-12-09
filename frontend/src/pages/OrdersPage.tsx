@@ -30,7 +30,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 interface Order {
   id: string;
@@ -77,7 +78,7 @@ export default function OrdersPage() {
       
       if (!restaurantId) return;
       
-      const response = await fetch(`${API_BASE_URL}/orders?restaurantId=${restaurantId}`);
+      const response = await fetch(`${API_URL}/orders?restaurantId=${restaurantId}`);
       if (!response.ok) throw new Error('Failed to fetch orders');
       const data = await response.json();
       
@@ -143,7 +144,7 @@ export default function OrdersPage() {
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
+      const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus.toUpperCase() }),
@@ -187,7 +188,7 @@ export default function OrdersPage() {
     try {
       setIsClearing(true);
       if (!restaurantId) return;
-      const response = await fetch(`${API_BASE_URL}/orders/clear-today?restaurantId=${restaurantId}`, {
+      const response = await fetch(`${API_URL}/orders/clear-today?restaurantId=${restaurantId}`, {
         method: 'DELETE',
       });
 

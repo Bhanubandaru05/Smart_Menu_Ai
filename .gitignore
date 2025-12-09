@@ -14,8 +14,9 @@ bun.lockb
 .env.production
 .env.*.local
 backend/.env
-frontend/.env
 server/.env
+# Allow frontend/.env for Vercel deployment
+# frontend/.env
 
 # Logs
 logs/

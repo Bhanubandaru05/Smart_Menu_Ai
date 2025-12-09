@@ -18,6 +18,10 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
@@ -68,8 +72,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       
       // Fetch both orders and service requests
       const [ordersRes, serviceRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/orders?restaurantId=${restaurantId}`),
-        fetch(`http://localhost:5000/api/service-requests?restaurantId=${restaurantId}`)
+        fetch(`${API_URL}/orders?restaurantId=${restaurantId}`),
+        fetch(`${API_URL}/service-requests?restaurantId=${restaurantId}`)
       ]);
       
       const allNotifications = [];
@@ -256,7 +260,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                             navigate('/dashboard/orders');
                           } else if (notif.type === 'service') {
                             // Resolve service request
-                            fetch(`http://localhost:5000/api/service-requests/${notif.id}/resolve`, {
+                            fetch(`${API_URL}/service-requests/${notif.id}/resolve`, {
                               method: 'PUT'
                             }).then(() => fetchNotifications());
                           }

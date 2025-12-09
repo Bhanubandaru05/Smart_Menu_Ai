@@ -38,7 +38,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -77,10 +78,10 @@ export default function Dashboard() {
 
       // Fetch all data in parallel
       const [ordersResponse, tablesResponse, menuResponse, serviceResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/orders?restaurantId=${RESTAURANT_ID}`),
-        fetch(`${API_BASE_URL}/tables?restaurantId=${RESTAURANT_ID}`),
-        fetch(`${API_BASE_URL}/menu?restaurantId=${RESTAURANT_ID}`),
-        fetch(`${API_BASE_URL}/service-requests?restaurantId=${RESTAURANT_ID}`),
+        fetch(`${API_URL}/orders?restaurantId=${RESTAURANT_ID}`),
+        fetch(`${API_URL}/tables?restaurantId=${RESTAURANT_ID}`),
+        fetch(`${API_URL}/menu?restaurantId=${RESTAURANT_ID}`),
+        fetch(`${API_URL}/service-requests?restaurantId=${RESTAURANT_ID}`),
       ]);
 
       console.log('Response status:', {
@@ -261,7 +262,7 @@ export default function Dashboard() {
   const handleClearTodayData = async () => {
     try {
       setIsClearing(true);
-      const response = await fetch(`${API_BASE_URL}/orders/clear-today?restaurantId=${RESTAURANT_ID}`, {
+      const response = await fetch(`${API_URL}/orders/clear-today?restaurantId=${RESTAURANT_ID}`, {
         method: 'DELETE',
       });
 
@@ -289,7 +290,7 @@ export default function Dashboard() {
 
   const handleResolveServiceRequest = async (id: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/service-requests/${id}/resolve`, {
+      const response = await fetch(`${API_URL}/service-requests/${id}/resolve`, {
         method: 'PUT',
       });
 

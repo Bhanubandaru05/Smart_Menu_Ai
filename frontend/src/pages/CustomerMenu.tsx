@@ -118,7 +118,7 @@ export default function CustomerMenu() {
     // Try server-side AI first (if running), fall back to local rule-based assistant
     (async () => {
       try {
-        const aiEndpoint = process.env.NODE_ENV === 'development' ? 'http://localhost:5174/api/ai' : '/api/ai';
+        const aiEndpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/ai`;
         const r = await fetch(aiEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

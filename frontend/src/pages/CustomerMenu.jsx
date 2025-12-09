@@ -26,13 +26,14 @@ import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 const categories = ['All', 'Starters', 'Main Course', 'Desserts', 'Beverages', 'Breads'];
 
 // Fetch table information to get restaurant ID
 async function fetchTableInfo(tableId) {
-  const response = await fetch(`${API_BASE_URL}/tables/${tableId}/info`);
+  const response = await fetch(`${API_URL}/tables/${tableId}/info`);
   if (!response.ok) {
     throw new Error('Failed to fetch table info');
   }
@@ -41,7 +42,7 @@ async function fetchTableInfo(tableId) {
 
 // Fetch restaurant information
 async function fetchRestaurantInfo(restaurantId) {
-  const response = await fetch(`${API_BASE_URL}/settings?restaurantId=${restaurantId}`);
+  const response = await fetch(`${API_URL}/settings?restaurantId=${restaurantId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch restaurant info');
   }
@@ -50,7 +51,7 @@ async function fetchRestaurantInfo(restaurantId) {
 
 // Fetch menu items from backend
 async function fetchMenuItems(restaurantId) {
-  const response = await fetch(`${API_BASE_URL}/menu?restaurantId=${restaurantId}`);
+  const response = await fetch(`${API_URL}/menu?restaurantId=${restaurantId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch menu items');
   }
@@ -323,7 +324,7 @@ export default function CustomerMenu() {
   const handleServiceRequest = async (type) => {
     try {
       const requestType = type.toUpperCase();
-      const response = await fetch(`${API_BASE_URL}/service-requests`, {
+      const response = await fetch(`${API_URL}/service-requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -377,7 +378,7 @@ export default function CustomerMenu() {
         customerName: 'Customer' // Can be enhanced to ask for customer name
       };
 
-      const response = await fetch(`${API_BASE_URL}/orders`, {
+      const response = await fetch(`${API_URL}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),

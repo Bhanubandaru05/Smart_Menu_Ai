@@ -16,7 +16,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE_URL}/api`;
 
 export default function QRGenerator() {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ export default function QRGenerator() {
   const fetchTables = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/tables?restaurantId=${user.restaurantId}`);
+      const response = await fetch(`${API_URL}/tables?restaurantId=${user.restaurantId}`);
       if (!response.ok) throw new Error('Failed to fetch tables');
       const data = await response.json();
       setTables(data);
