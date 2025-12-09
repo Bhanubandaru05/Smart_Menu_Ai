@@ -13,9 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE_URL}/api`;
+import { API_BASE_URL, API_URL, getApiUrl } from '@/utils/apiBase';
 
 type Staff = {
   id: string;

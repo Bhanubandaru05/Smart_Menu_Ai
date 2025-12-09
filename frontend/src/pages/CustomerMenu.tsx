@@ -118,7 +118,7 @@ export default function CustomerMenu() {
     // Try server-side AI first (if running), fall back to local rule-based assistant
     (async () => {
       try {
-        const aiEndpoint = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/ai`;
+        const aiEndpoint = getApiUrl('/api/ai');
         const r = await fetch(aiEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

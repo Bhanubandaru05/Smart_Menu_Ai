@@ -27,9 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE_URL}/api`;
+import { API_BASE, API_URL, getApiUrl, apiFetch } from '@/utils/apiBase';
 
 const categories = ['All', 'Starters', 'Main Course', 'Desserts', 'Beverages', 'Breads'];
 

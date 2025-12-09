@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE_URL}/api`;
+import { API_BASE_URL, API_URL, getApiUrl } from '@/utils/apiBase';
 
 export default function OrdersPageNew() {
   const { user } = useAuth();

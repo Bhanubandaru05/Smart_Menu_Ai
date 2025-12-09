@@ -6,9 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Lock, CheckCircle } from 'lucide-react';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE_URL}/api`;
+import { API_BASE_URL, API_URL, getApiUrl } from '@/utils/apiBase';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();

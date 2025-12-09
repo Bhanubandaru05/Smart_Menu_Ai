@@ -9,9 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Building2, User, Lock, Save } from 'lucide-react';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE_URL}/api`;
+import { API_BASE_URL, API_URL, getApiUrl } from '@/utils/apiBase';
 
 export default function Settings() {
   const { toast } = useToast();

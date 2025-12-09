@@ -15,9 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { API_BASE_URL, API_URL, getApiUrl } from '@/utils/apiBase';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = `${API_BASE_URL}/api`;
 
 export default function QRGenerator() {
   const { user } = useAuth();
