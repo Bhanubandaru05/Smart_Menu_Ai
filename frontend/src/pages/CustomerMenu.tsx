@@ -171,7 +171,7 @@ export default function CustomerMenu() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-xl font-bold font-display">Cafe Luna</h1>
-              <p className="text-sm text-muted-foreground">Table 5 • Floor 1 Menu</p>
+              <p className="text-sm text-muted-foreground">Demo Menu</p>
             </div>
             <div className="flex items-center gap-2">
               <Button

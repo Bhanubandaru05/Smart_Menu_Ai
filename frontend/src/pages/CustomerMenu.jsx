@@ -507,10 +507,10 @@ export default function CustomerMenu() {
           <div className="bg-muted/50 rounded-lg p-4 text-sm text-left">
             <p className="font-medium mb-2">📱 QR Code Format:</p>
             <code className="block bg-background px-3 py-2 rounded text-xs">
-              /menu?table=5
+              /menu?table=&lt;TABLE_NUMBER&gt;
             </code>
             <p className="mt-2 text-xs text-muted-foreground">
-              Or use a direct table link with UUID
+              Or use a direct table link: /menu/&lt;TABLE_ID&gt;
             </p>
           </div>
           {console.log('[MenuAI] No table identifier provided - showing scan prompt')}
@@ -553,7 +553,7 @@ export default function CustomerMenu() {
                 {restaurantInfo?.name || 'MenuAI Restaurant'}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {tableId ? `Table ${tableId}` : 'Browse Menu'}
+                {TABLE_DISPLAY || 'Browse Menu'}
               </p>
               {restaurantInfo?.description && (
                 <p className="text-xs text-muted-foreground mt-1 max-w-md line-clamp-2">
