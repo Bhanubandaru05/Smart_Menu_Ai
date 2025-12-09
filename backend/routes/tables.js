@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = require('../db');
 
 // GET all tables
 router.get('/', async (req, res) => {
@@ -31,8 +27,17 @@ router.get('/', async (req, res) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error('Error fetching tables:', error);
-    res.status(500).json({ error: 'Failed to fetch tables' });
+    console.error('❌ Error fetching tables:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+      restaurantId: req.query.restaurantId
+    });
+    res.status(500).json({ 
+      error: 'Failed to fetch tables',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
@@ -175,8 +180,17 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(table);
   } catch (error) {
-    console.error('Error creating table:', error);
-    res.status(500).json({ error: 'Failed to create table' });
+    console.error('❌ Error creating table:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+      body: req.body
+    });
+    res.status(500).json({ 
+      error: 'Failed to create table',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 

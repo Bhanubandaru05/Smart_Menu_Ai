@@ -21,6 +21,7 @@ const allowedOrigins = [
   'https://smartmenuai.vercel.app',
   'https://smart-menu-ai.onrender.com',
   'http://localhost:8080',
+  'http://localhost:8081', // Vite dev server
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:3000'
