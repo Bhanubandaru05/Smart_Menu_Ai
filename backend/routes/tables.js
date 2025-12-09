@@ -36,29 +36,109 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET single table by ID (for customer menu)
+// GET table lookup - handles both UUID and numeric table IDs, plus query params
+router.get('/lookup', async (req, res) => {
+  try {
+    const { table, tableId, id } = req.query;
+    const lookupValue = table || tableId || id;
+    
+    console.log('[Table Lookup] Query params:', { table, tableId, id, lookupValue });
+    
+    if (!lookupValue) {
+      console.error('[Table Lookup] No table identifier provided');
+      return res.status(400).json({ error: 'Table identifier is required (table, tableId, or id)' });
+    }
+
+    // Check if it's a UUID (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(lookupValue);
+    
+    let result;
+    
+    if (isUUID) {
+      // Lookup by UUID (id column)
+      console.log('[Table Lookup] Looking up by UUID:', lookupValue);
+      result = await pool.query(
+        `SELECT 
+          t.id,
+          t.number as table_number,
+          t.restaurant_id as "restaurantId",
+          t.status,
+          t.label,
+          t.seats
+        FROM tables t
+        WHERE t.id = $1`,
+        [lookupValue]
+      );
+    } else {
+      // Lookup by table number (numeric)
+      console.log('[Table Lookup] Looking up by table number:', lookupValue);
+      result = await pool.query(
+        `SELECT 
+          t.id,
+          t.number as table_number,
+          t.restaurant_id as "restaurantId",
+          t.status,
+          t.label,
+          t.seats
+        FROM tables t
+        WHERE t.number = $1
+        ORDER BY t.created_at DESC
+        LIMIT 1`,
+        [parseInt(lookupValue)]
+      );
+    }
+
+    if (result.rows.length === 0) {
+      console.error('[Table Lookup] Table not found:', lookupValue);
+      return res.status(404).json({ 
+        error: 'Table not found', 
+        searchedFor: lookupValue,
+        searchType: isUUID ? 'UUID' : 'table_number'
+      });
+    }
+
+    const tableData = result.rows[0];
+    console.log('[Table Lookup] Found table:', tableData);
+    
+    res.json({
+      success: true,
+      table: tableData,
+      displayLabel: tableData.label || `Table ${tableData.table_number}`
+    });
+  } catch (error) {
+    console.error('[Table Lookup] Error:', error);
+    res.status(500).json({ error: 'Failed to lookup table', details: error.message });
+  }
+});
+
+// GET single table by ID (for customer menu) - Backward compatibility
 router.get('/:tableId/info', async (req, res) => {
   try {
     const { tableId } = req.params;
+    
+    console.log('[Table Info] Looking up tableId:', tableId);
     
     const result = await pool.query(
       `SELECT 
         t.id,
         t.number,
         t.restaurant_id as "restaurantId",
-        t.status
+        t.status,
+        t.label
       FROM tables t
       WHERE t.id = $1`,
       [tableId]
     );
 
     if (result.rows.length === 0) {
+      console.error('[Table Info] Table not found:', tableId);
       return res.status(404).json({ error: 'Table not found' });
     }
 
+    console.log('[Table Info] Found table:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error fetching table info:', error);
+    console.error('[Table Info] Error fetching table info:', error);
     res.status(500).json({ error: 'Failed to fetch table info' });
   }
 });

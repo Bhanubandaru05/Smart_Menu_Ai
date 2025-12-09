@@ -18,7 +18,9 @@ import {
   Leaf,
   Flame,
   Star,
-  Loader2
+  Loader2,
+  AlertCircle,
+  UtensilsCrossed
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,13 +33,71 @@ const API_URL = `${API_BASE_URL}/api`;
 
 const categories = ['All', 'Starters', 'Main Course', 'Desserts', 'Beverages', 'Breads'];
 
-// Fetch table information to get restaurant ID
-async function fetchTableInfo(tableId) {
-  const response = await fetch(`${API_URL}/tables/${tableId}/info`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch table info');
+// Helper to get table ID from URL (query param or path param)
+function getTableIdentifier() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tableFromQuery = urlParams.get('table') || urlParams.get('tableId') || urlParams.get('id');
+  
+  // Also check path params (from React Router)
+  const pathMatch = window.location.pathname.match(/\/menu\/([^\/]+)/);
+  const tableFromPath = pathMatch ? pathMatch[1] : null;
+  
+  const result = tableFromQuery || tableFromPath;
+  console.log('[MenuAI] Table identifier:', { 
+    query: tableFromQuery, 
+    path: tableFromPath, 
+    selected: result,
+    fullURL: window.location.href 
+  });
+  
+  return result;
+}
+
+// Fetch table information with lookup support (handles both UUID and numeric IDs)
+async function fetchTableInfo(tableIdentifier) {
+  console.log('[MenuAI] Fetching table info for:', tableIdentifier);
+  
+  if (!tableIdentifier) {
+    console.error('[MenuAI] No table identifier provided');
+    throw new Error('No table identifier provided');
   }
-  return await response.json();
+  
+  try {
+    // Try lookup endpoint first (supports both UUID and numeric)
+    const lookupUrl = `${API_URL}/tables/lookup?table=${encodeURIComponent(tableIdentifier)}`;
+    console.log('[MenuAI] Lookup URL:', lookupUrl);
+    
+    const response = await fetch(lookupUrl);
+    
+    if (!response.ok) {
+      console.error('[MenuAI] Lookup failed:', response.status, response.statusText);
+      
+      // Fallback: try legacy endpoint if UUID
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tableIdentifier)) {
+        console.log('[MenuAI] Trying legacy endpoint for UUID');
+        const legacyResponse = await fetch(`${API_URL}/tables/${tableIdentifier}/info`);
+        if (!legacyResponse.ok) {
+          throw new Error(`Failed to fetch table info: ${response.status}`);
+        }
+        const data = await legacyResponse.json();
+        console.log('[MenuAI] Legacy endpoint success:', data);
+        return { ...data, displayLabel: data.label || `Table ${data.number}` };
+      }
+      
+      throw new Error(`Table not found: ${tableIdentifier}`);
+    }
+    
+    const data = await response.json();
+    console.log('[MenuAI] Table lookup success:', data);
+    
+    return {
+      ...data.table,
+      displayLabel: data.displayLabel || data.table?.label || `Table ${data.table?.table_number || data.table?.number || tableIdentifier}`
+    };
+  } catch (error) {
+    console.error('[MenuAI] Error fetching table info:', error);
+    throw error;
+  }
 }
 
 // Fetch restaurant information
@@ -68,7 +128,8 @@ async function fetchMenuItems(restaurantId) {
 }
 
 export default function CustomerMenu() {
-  const { tableId } = useParams();
+  const { tableId: paramTableId } = useParams();
+  const [tableIdentifier, setTableIdentifier] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showVegOnly, setShowVegOnly] = useState(false);
@@ -78,14 +139,33 @@ export default function CustomerMenu() {
   const { items: cartItems, addItem, removeItem, updateQuantity, total, itemCount, clearCart } = useCart();
   const { toast } = useToast();
 
+  // Extract table identifier from URL (query or path params)
+  useEffect(() => {
+    const identifier = getTableIdentifier() || paramTableId;
+    console.log('[MenuAI] Component mounted with identifier:', identifier);
+    setTableIdentifier(identifier);
+  }, [paramTableId]);
+
   // Fetch table info to get restaurant ID
-  const { data: tableInfo } = useQuery({
-    queryKey: ['table-info', tableId],
-    queryFn: () => fetchTableInfo(tableId),
-    enabled: !!tableId,
+  const { data: tableInfo, isError: tableError, error: tableErrorMsg } = useQuery({
+    queryKey: ['table-info', tableIdentifier],
+    queryFn: () => fetchTableInfo(tableIdentifier),
+    enabled: !!tableIdentifier,
+    retry: 2,
+    onError: (error) => {
+      console.error('[MenuAI] Table info query error:', error);
+      toast({
+        title: '❌ Table Not Found',
+        description: `Could not find table: ${tableIdentifier}. Please scan a valid QR code.`,
+        variant: 'destructive',
+      });
+    },
   });
 
   const RESTAURANT_ID = tableInfo?.restaurantId || '';
+  const TABLE_DISPLAY = tableInfo?.displayLabel || tableInfo?.label || `Table ${tableInfo?.table_number || tableInfo?.number || tableIdentifier}`;
+
+  console.log('[MenuAI] Render state:', { tableIdentifier, tableInfo, RESTAURANT_ID, TABLE_DISPLAY });
 
   // Fetch restaurant info with React Query
   const { data: restaurantInfo } = useQuery({
@@ -412,6 +492,33 @@ export default function CustomerMenu() {
     }
   };
 
+  // Show message if no table identifier
+  if (!tableIdentifier && !tableInfo) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+            <UtensilsCrossed className="w-12 h-12 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold mb-3">Welcome to MenuAI</h1>
+          <p className="text-muted-foreground mb-6">
+            To view the menu, please scan the QR code on your table.
+          </p>
+          <div className="bg-muted/50 rounded-lg p-4 text-sm text-left">
+            <p className="font-medium mb-2">📱 QR Code Format:</p>
+            <code className="block bg-background px-3 py-2 rounded text-xs">
+              /menu?table=5
+            </code>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Or use a direct table link with UUID
+            </p>
+          </div>
+          {console.log('[MenuAI] No table identifier provided - showing scan prompt')}
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -518,12 +625,53 @@ export default function CustomerMenu() {
 
       {/* Menu Items Grid */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl flex-grow pb-32">
-        {filteredItems.length === 0 ? (
+        {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No items found</p>
+            <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-primary" />
+            <p className="text-lg font-medium">Loading menu...</p>
+            <p className="text-sm text-muted-foreground mt-2">Please wait while we fetch the menu items</p>
+          </div>
+        ) : isError ? (
+          <div className="text-center py-12">
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-destructive" />
+            <p className="text-lg font-medium text-destructive">Failed to Load Menu</p>
+            <p className="text-sm text-muted-foreground mt-2">{error?.message || 'Please try refreshing the page'}</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="mt-4"
+              variant="outline"
+            >
+              Refresh Page
+            </Button>
+          </div>
+        ) : menuItems.length === 0 ? (
+          <div className="text-center py-12">
+            <UtensilsCrossed className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-lg font-medium">No Menu Items Available</p>
+            <p className="text-sm text-muted-foreground mt-2">This restaurant hasn't added any items yet. Please check back later.</p>
+            {console.log('[MenuAI] Empty menu - No items in database for restaurant:', RESTAURANT_ID)}
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div className="text-center py-12">
+            <Search className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-lg font-medium">No Items Match Your Filters</p>
+            <p className="text-sm text-muted-foreground mt-2">Try adjusting your search or category filters</p>
+            <Button 
+              onClick={() => {
+                setSelectedCategory('All');
+                setSearchQuery('');
+                setShowVegOnly(false);
+              }}
+              className="mt-4"
+              variant="outline"
+            >
+              Clear Filters
+            </Button>
+            {console.log('[MenuAI] No filtered items:', { selectedCategory, searchQuery, showVegOnly, totalItems: menuItems.length })}
           </div>
         ) : (
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="menu-grid">
+            {console.log('[MenuAI] Rendering', filteredItems.length, 'menu items')}
             {filteredItems.map((item) => (
               <motion.div
                 key={item.id}

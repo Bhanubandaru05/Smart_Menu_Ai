@@ -31,7 +31,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
@@ -39,7 +39,8 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               
-              {/* Customer Routes */}
+              {/* Customer Routes - Handle both /menu and /menu/:tableId */}
+              <Route path="/menu" element={<CustomerMenu />} />
               <Route path="/menu/:tableId" element={<CustomerMenu />} />
               <Route path="/demo" element={<CustomerMenu />} />
               

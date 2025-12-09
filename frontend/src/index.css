@@ -228,3 +228,41 @@
     opacity: 1;
   }
 }
+
+/* Responsive Menu Grid for CustomerMenu - Mobile QR Optimization */
+.menu-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile-optimized touch targets */
+@media (max-width: 639px) {
+  .menu-grid button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .menu-grid .glass {
+    padding: 1rem;
+  }
+}
