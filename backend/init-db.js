@@ -62,6 +62,8 @@ async function initDatabase() {
         name TEXT,
         role role_enum DEFAULT 'ADMIN',
         restaurant_id UUID REFERENCES restaurants(id),
+        reset_token VARCHAR(255),
+        reset_token_expiry TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       )

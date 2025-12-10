@@ -164,8 +164,10 @@ router.get('/me', async (req, res) => {
 router.post('/forgot-password', validateEmail, async (req, res) => {
   try {
     const { email } = req.body;
+    console.log('🔐 Forgot password request for:', email);
 
     if (!email) {
+      console.log('❌ Email missing in request');
       return res.status(400).json({ error: 'Email is required' });
     }
 
@@ -192,6 +194,8 @@ router.post('/forgot-password', validateEmail, async (req, res) => {
     const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
     const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
 
+    console.log('🔑 Generated reset token for:', email);
+
     // Store reset token in database
     await pool.query(
       `UPDATE users 
@@ -200,19 +204,24 @@ router.post('/forgot-password', validateEmail, async (req, res) => {
       [resetTokenHash, resetTokenExpiry, email]
     );
 
-    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:8080'}/reset-password?token=${resetToken}`;
+    console.log('💾 Reset token stored in database');
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:8080';
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     // Log for console and return link
     console.log('\n✉️  PASSWORD RESET REQUESTED');
     console.log(`Email: ${email}`);
+    console.log(`Frontend URL: ${frontendUrl}`);
     console.log(`Reset Link: ${resetLink}`);
     console.log(`Expires: ${resetTokenExpiry.toLocaleString()}`);
     console.log('=====================================\n');
 
     res.json({ 
-      message: 'Password reset link generated successfully!',
+      message: 'Password reset link generated successfully! Check the server logs for the reset link.',
       success: true,
-      resetLink: resetLink // Always return link for now
+      resetLink: resetLink, // Always return link for now (remove in production)
+      frontendUrl: frontendUrl
     });
 
   } catch (error) {
@@ -224,7 +233,7 @@ router.post('/forgot-password', validateEmail, async (req, res) => {
     });
     res.status(500).json({ 
       error: 'Failed to process password reset request',
-      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });

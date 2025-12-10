@@ -72,9 +72,7 @@ export function Hero() {
               <Link to="/signup" className="inline-flex items-center justify-center gap-3 px-4 sm:px-5 py-3 rounded-lg bg-gradient-to-r from-orange-400 to-orange-500 text-white font-semibold shadow-sm text-sm sm:text-base">
                 Get Started Free
               </Link>
-              <Link to="/demo" className="inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-200 text-gray-700 bg-white text-sm sm:text-base">
-                View Demo
-              </Link>
+              
             </div>
           </motion.div>
         </div>
